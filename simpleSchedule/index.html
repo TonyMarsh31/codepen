@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>日程安排</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(to right, #e1614e, #f3d88f);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 95vh;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes floatButton {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .schedule {
+        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        width: 80%;
+        max-width: 600px;
+        overflow: hidden; /* 为了动画效果更佳 */
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        border-bottom: 3px solid #e1614e;
+        padding-bottom: 10px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        animation: slideIn 0.5s ease-out forwards;
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #e1614e;
+        color: #f3d88f;
+        cursor: pointer;
+        transition:
+          background 0.3s,
+          color 0.3s;
+        animation: floatButton 2s infinite;
+      }
+
+      button:hover {
+        background: #f3d88f;
+        color: #e1614e;
+      }
+
+      li {
+        transition:
+          transform 1s ease,
+          flex-direction 1s ease;
+        padding: 15px;
+      }
+
+      li span.content {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: all 0.3s ease;
+        flex: 3; /* 使内容部分更加宽广 */
+        font-size: 0.9em; /* 加大字体大小 */
+        color: #fffbf3; /* 黄色文字 */
+        text-align: left;
+      }
+
+      li span.time {
+        flex: 1; /* 使时间部分较窄 */
+        font-weight: bold; /* 使用粗体 */
+        font-size: 1em; /* 适度的字体大小 */
+        text-align: right; /* 时间右对齐 */
+        /*background-color: #4d150d; !* 背景 *!*/
+        padding: 1px 1px; /* 适量的填充 */
+        border-radius: 10px; /* 圆角 */
+        color: #d8dcba; /* 文字 */
+      }
+
+      strong {
+        color: #f3d88f;
+        font-weight: bolder;
+        font-size: 1.1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="schedule">
+      <h1>日程安排</h1>
+      <ul>
+        <li>
+          <span class="content">开场</span><span class="time">12:45~13:10</span>
+        </li>
+        <li>
+          <span class="content">第一环节与第二环节 <strong>销售</strong></span
+          ><span class="time">13:10~14:11</span>
+        </li>
+        <li>
+          <span class="content">茶歇</span><span class="time">13:11~14:21</span>
+        </li>
+        <li>
+          <span class="content">第一环节、第二环节 <strong>新媒体</strong></span
+          ><span class="time">14:21~14:44</span>
+        </li>
+        <li>
+          <span class="content">第三环节 团队协作 第一组</span
+          ><span class="time">14:44~14:54</span>
+        </li>
+        <li>
+          <span class="content">第三环节 团队协作 第二组</span
+          ><span class="time">14:54~15:04</span>
+        </li>
+        <li>
+          <span class="content">第三环节 团队协作 第三组</span
+          ><span class="time">15:04~15:14</span>
+        </li>
+        <li>
+          <span class="content">视频播放</span
+          ><span class="time">15:14~15:21</span>
+        </li>
+        <li>
+          <span class="content">公布名次 颁奖</span
+          ><span class="time">15:21~15:26</span>
+        </li>
+        <li>
+          <span class="content">合影拍照</span
+          ><span class="time">15:26~15:30</span>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      // 此处可以添加更多JS交互效果
+      const listItems = document.querySelectorAll("li");
+
+      listItems.forEach((item, index) => {
+        item.style.animationDelay = `${0.1 * index}s`; // 每个列表项的动画都有一个小的延迟，这样它们会逐个滑入，而不是一次全部滑入。
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var items = document.querySelectorAll("li");
+        var currentItem = null;
+        var longPressTimer = null;
+
+        function scaleUp(item) {
+          if (currentItem && currentItem !== item) {
+            scaleDown(currentItem);
+          }
+          currentItem = item;
+          item.style.flexDirection = "column";
+          setTimeout(function () {
+            item.style.transform = "scale(1.1)";
+            item.querySelector("span.time").style.flex = "100%";
+          }, 50);
+          // 短时间后，自动缩小
+          setTimeout(function () {
+            scaleDown(item);
+          }, 5000);
+        }
+
+        function scaleDown(item) {
+          item.style.transform = "scale(1)";
+          setTimeout(function () {
+            item.style.flexDirection = "row";
+            item.querySelector("span.time").style.flex = "1";
+          }, 250);
+        }
+
+        function handleClick(evt) {
+          scaleUp(evt.currentTarget);
+        }
+
+        function handleTouchStart(evt) {
+          var item = evt.currentTarget;
+          longPressTimer = setTimeout(function () {
+            scaleUp(item);
+          }, 500); // 长按时间为500ms
+        }
+
+        function handleTouchEnd() {
+          clearTimeout(longPressTimer); // 如果触摸在500ms之前结束，清除长按计时器
+        }
+
+        for (var i = 0; i < items.length; i++) {
+          items[i].addEventListener("click", handleClick);
+          items[i].addEventListener("touchstart", handleTouchStart);
+          items[i].addEventListener("touchend", handleTouchEnd);
+          items[i].addEventListener("touchcancel", handleTouchEnd);
+        }
+      });
+    </script>
+  </body>
+</html>

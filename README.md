@@ -1,0 +1,1 @@
+A collection of minor projects developed on my way of learning frontend development.
