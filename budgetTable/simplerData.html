@@ -4,120 +4,31 @@
     <meta charset="UTF-8">
     <title>Query Budget Information</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
-    <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+
+    <!--    table stuff-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/colresizable/1.6.0/colResizable-1.6.js"
+            integrity="sha512-0HfjrMq6p8VBkVjp/gy/obELN81BCwmKRd7fongBsAPw49BeKAfXpQn6PWSPa8rm7mvblqyV2P1kVNzvW6qR4Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--    font-->
     <link rel='stylesheet'
           href='https://chinese-fonts-cdn.deno.dev/packages/lxgwwenkai/dist/LXGWWenKai-Bold/result.css'/>
     <link rel='stylesheet' href='https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css'/>
 
     <script>
         $(document).ready(function () {
-            $("#resultsTable").tablesorter();
+            const theTable = $("#resultsTable");
+            theTable.tablesorter();
+            theTable.colResizable({
+                liveDrag: true,
+                // gripInnerHtml: "<div class='grip'></div>",
+                // draggingClass: "dragging",
+                // resizeMode: 'fit'
+            });
         });
     </script>
-    <style>
-        body {
-            font-family: 'LXGW WenKai', sans-serif;
-            font-weight: 400;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ccc;
-        }
-
-        th {
-            background-color: #606c88;
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 240px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        .filter-section {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: separate;
-            border-spacing: 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        th, td {
-            font-family: 'Source Han Serif CN VF', sans-serif;
-            font-weight: bold;
-            font-size: 14px;
-            padding: 26px 35px;
-            text-align: left;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        th {
-            background: linear-gradient(145deg, #6a82fb, #fc5c7d);
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        tbody tr:hover {
-            background-color: #f5f5f5;
-            transition: background-color 0.3s ease;
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-    </style>
+    <link href="css.css" rel="stylesheet"/>
 
     <script>
         function applyFilters() {
@@ -158,6 +69,33 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        function exportToCSV() {
+            var csv = [];
+            var rows = document.querySelectorAll("table tr");
+            csv.push('\uFEFF');
+            for (var i = 0; i < rows.length; i++) {
+                var row = [], cols = rows[i].querySelectorAll("td, th");
+                for (var j = 0; j < cols.length; j++)
+                    row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+                csv.push(row.join(","));
+            }
+            downloadCSV(csv.join("\n"), 'table-data.csv');
+        }
+
+        function downloadCSV(csv, filename) {
+            var csvFile;
+            var downloadLink;
+            csvFile = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+            downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
 
     </script>
 
@@ -173,9 +111,10 @@
     <label for="filterAccount">预算科目</label>
     <input type="text" id="filterAccount" placeholder="浮动绩效">
     <button onclick="applyFilters()">筛选</button>
+    <button onclick="exportToCSV()">保存到本地</button>
 </div>
 
-<table id="resultsTable" border="1">
+<table id="resultsTable">
     <thead>
     <tr>
         <th>主体</th>
