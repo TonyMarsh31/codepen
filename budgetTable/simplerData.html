@@ -26,6 +26,7 @@
 
     <script>
         $(document).ready(function () {
+            $('#resultsTable').hide();
             const theTable = $("#resultsTable");
            theTable.tablesorter();
             theTable.colResizable({
@@ -118,6 +119,7 @@
 
     <script>
         function exportToCSV() {
+            // todo 用handsontable之后， 这个会导出两边
             var csv = [];
             var rows = document.querySelectorAll("table tr");
             csv.push('\uFEFF');
