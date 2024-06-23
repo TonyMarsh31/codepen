@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Budget Information</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+    <link rel='stylesheet'
+          href='https://chinese-fonts-cdn.deno.dev/packages/lxgwwenkai/dist/LXGWWenKai-Bold/result.css'/>
+    <link rel='stylesheet' href='https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css'/>
+
+    <script>
+        $(document).ready(function () {
+            $("#resultsTable").tablesorter();
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'LXGW WenKai', sans-serif;
+            font-weight: 400;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #606c88;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 240px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .filter-section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            font-family: 'Source Han Serif CN VF', sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 26px 35px;
+            text-align: left;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        th {
+            background: linear-gradient(145deg, #6a82fb, #fc5c7d);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    </style>
+
+    <script>
+        function applyFilters() {
+            let inputYYZT = document.getElementById('filterEntity').value.toLowerCase();
+            let inputYYKM = document.getElementById('filterAccount').value.toLowerCase();
+            let table = document.getElementById('resultsTable');
+            let tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header row
+                let tdEntity = tr[i].getElementsByTagName('td')[0];
+                let tdAccount = tr[i].getElementsByTagName('td')[1];
+                if (tdEntity && tdAccount) {
+                    let textYYZT = tdEntity.textContent || tdEntity.innerText;
+                    let textYYKM = tdAccount.textContent || tdAccount.innerText;
+                    if (textYYZT.toLowerCase().indexOf(inputYYZT) > -1 &&
+                        textYYKM.toLowerCase().indexOf(inputYYKM) > -1
+                    ) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        <!-- double click -->
+        document.addEventListener('DOMContentLoaded', function () {
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.addEventListener('dblclick', function () {
+                    const range = document.createRange();
+                    range.selectNodeContents(this);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                });
+            });
+        });
+
+    </script>
+
+
+</head>
+
+<body>
+<!--<h2>负数可用预算</h2>-->
+
+<div class="filter-section">
+    <label for="filterEntity">预算主体</label>
+    <input type="text" id="filterEntity" placeholder="永达">
+    <label for="filterAccount">预算科目</label>
+    <input type="text" id="filterAccount" placeholder="浮动绩效">
+    <button onclick="applyFilters()">筛选</button>
+</div>
+
+<table id="resultsTable" border="1">
+    <thead>
+    <tr>
+        <th>主体</th>
+        <th>科目</th>
+        <th>区间可用</th>
+        <th>区间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Results will be appended here -->
+    <tr>
+        <td>永达集团职能中心</td>
+        <td>浮动绩效</td>
+        <td>-14281600.45</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>新能源汽车服务产业发展筹备组</td>
+        <td>客户关系管理费</td>
+        <td>-16967.48</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>永达小鹏上海浦西售后服务中心</td>
+        <td>售后运杂燃油费</td>
+        <td>-215</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>永达小鹏上海南汇4S店</td>
+        <td>固定薪酬</td>
+        <td>-379898.82</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>永达小鹏上海金桥服务中心</td>
+        <td>售后运杂燃油费</td>
+        <td>-77669.81</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>永达小鹏上海浦东康桥360展厅</td>
+        <td>固定薪酬</td>
+        <td>-316227.51</td>
+        <td>年控</td>
+    </tr>
+    <tr>
+        <td>永达小鹏上海浦东康桥360展厅</td>
+        <td>浮动绩效</td>
+        <td>-404662.37</td>
+        <td>年控</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
