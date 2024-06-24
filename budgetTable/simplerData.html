@@ -2,45 +2,31 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Query Budget Information</title>
+    <title>负数可用预算</title>
+
+    <!--    jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!--    table stuff-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/colresizable/1.6.0/colResizable-1.6.js"
-            integrity="sha512-0HfjrMq6p8VBkVjp/gy/obELN81BCwmKRd7fongBsAPw49BeKAfXpQn6PWSPa8rm7mvblqyV2P1kVNzvW6qR4Q=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <link href="https://cdn.jsdelivr.net/npm/handsontable@11.0.1/dist/handsontable.full.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/handsontable@11.0.1/dist/handsontable.full.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/handsontable@11.0.1/dist/languages/zh-CN.js"></script>
 
     <!--    font-->
     <link rel='stylesheet'
           href='https://chinese-fonts-cdn.deno.dev/packages/lxgwwenkai/dist/LXGWWenKai-Bold/result.css'/>
     <link rel='stylesheet' href='https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css'/>
 
-
+    <!--    css-->
     <link href="css.css" rel="stylesheet"/>
 
-
+    <!--   init table -->
     <script>
         $(document).ready(function () {
-            $('#resultsTable').hide();
-            const theTable = $("#resultsTable");
-           theTable.tablesorter();
-            theTable.colResizable({
-               liveDrag: true,
-                // gripInnerHtml: "<div class='grip'></div>",-->
-                // draggingClass: "dragging",-->
-                // resizeMode: 'fit'-->
-           });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            // Extract data from HTML table into an array
             const data = [];
+            const headers = [];
+
+            // Extract data from HTML table
             $("#resultsTable tbody tr").each(function () {
                 const rowData = [];
                 $(this).find('td').each(function () {
@@ -49,13 +35,12 @@
                 data.push(rowData);
             });
 
-            // Headers from the table
-            const headers = [];
+            // Extract headers
             $("#resultsTable thead th").each(function () {
                 headers.push($(this).text());
             });
 
-            // Initialize Handsontable in a new div container
+            // Initialize Handsontable
             const container = document.getElementById('handsontableContainer');
             const hot = new Handsontable(container, {
                 data: data,
@@ -64,59 +49,25 @@
                 manualRowResize: true,
                 manualColumnResize: true,
                 columnSorting: true,
-                contextMenu: true,
                 filters: true,
-                dropdownMenu: true,
-                licenseKey: 'non-commercial-and-evaluation' // if used non-commercially
-            });
-
-            // Hide the original table, since we're using Handsontable now
-            $('#resultsTable').hide();
-        });
-
-    </script>
-
-    <script>
-        function applyFilters() {
-            let inputYYZT = document.getElementById('filterEntity').value.toLowerCase();
-            let inputYYKM = document.getElementById('filterAccount').value.toLowerCase();
-            let table = document.getElementById('resultsTable');
-            let tr = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header row
-                let tdEntity = tr[i].getElementsByTagName('td')[0];
-                let tdAccount = tr[i].getElementsByTagName('td')[1];
-                if (tdEntity && tdAccount) {
-                    let textYYZT = tdEntity.textContent || tdEntity.innerText;
-                    let textYYKM = tdAccount.textContent || tdAccount.innerText;
-                    if (textYYZT.toLowerCase().indexOf(inputYYZT) > -1 &&
-                        textYYKM.toLowerCase().indexOf(inputYYKM) > -1
-                    ) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
+                dropdownMenu: {
+                    items: {
+                        'filter_by_value': {},
+                        'filter_action_bar': {},
                     }
-                }
-            }
-        }
-    </script>
-
-    <script>
-        <!-- double click -->
-        document.addEventListener('DOMContentLoaded', function () {
-            const cells = document.querySelectorAll('td');
-            cells.forEach(cell => {
-                cell.addEventListener('dblclick', function () {
-                    const range = document.createRange();
-                    range.selectNodeContents(this);
-                    const selection = window.getSelection();
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                });
+                },
+                contextMenu: false,
+                readOnly: true, // Make all data uneditable
+                language: 'zh-CN', // Set the language to Chinese - China
+                licenseKey: 'non-commercial-and-evaluation'
             });
+
+            // Remove the original table from the DOM
+            $('#resultsTable').remove();
         });
     </script>
 
+    <!--    导出到本地-->
     <script>
         function exportToCSV() {
             // todo 用handsontable之后， 这个会导出两边
@@ -150,16 +101,8 @@
 </head>
 
 <body>
-<!--<h2>负数可用预算</h2>-->
-
-<div class="filter-section">
-    <label for="filterEntity">预算主体</label>
-    <input type="text" id="filterEntity" placeholder="永达">
-    <label for="filterAccount">预算科目</label>
-    <input type="text" id="filterAccount" placeholder="浮动绩效">
-    <button onclick="applyFilters()">筛选</button>
-    <button onclick="exportToCSV()">保存到本地</button>
-</div>
+<h2>负数可用预算</h2>
+<button onclick="exportToCSV()">保存到本地</button>
 
 <div id="handsontableContainer"></div>
 
@@ -218,5 +161,6 @@
     </tr>
     </tbody>
 </table>
+
 </body>
 </html>
